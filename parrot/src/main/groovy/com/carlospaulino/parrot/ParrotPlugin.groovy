@@ -28,6 +28,11 @@ class ParrotPlugin implements Plugin<Project> {
                 def variantName = variant.name.capitalize()
                 def taskProperties = project.property("parrot") as ParrotPluginExtension
 
+                if(taskProperties.destinationLanguages.size() == 0) {
+                    project.logger.warn("Parrot wont perform any translations unless you specify one or more destination languages")
+                    return;
+                }
+
                 taskProperties.destinationLanguages.each { language ->
 
                     def outputDirectory = project.file("$project.buildDir/generated/res/rs/${flavorName}/${buildType.name}/values-${language}/");
