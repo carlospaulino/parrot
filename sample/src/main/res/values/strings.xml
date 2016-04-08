@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name22">222</string>
+    <string name="app_name33">333</string>
+    <string name="app_name">SAMPLE</string>
+    <string name="action_settings">Settings</string>
+    <string name="net_error_msg">Verify your connection</string>
+    <string name='nombre_de_usuario'>Username</string>
+    <string name="buscar">Search</string>
+    <string name="name">Carlos</string>
+</resources>

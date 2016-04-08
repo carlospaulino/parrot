@@ -1,0 +1,129 @@
+package com.carlospaulino.parrot
+
+import com.google.api.services.translate.Translate
+import com.google.api.services.translate.TranslateRequestInitializer
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
+
+import static com.carlospaulino.parrot.ResourcesSupport.generateTranslatedResourceXml
+import static com.google.api.client.googleapis.javanet.GoogleNetHttpTransport.newTrustedTransport
+import static com.google.api.client.json.jackson2.JacksonFactory.defaultInstance
+import static com.google.common.base.Strings.isNullOrEmpty
+import static groovy.json.internal.Charsets.UTF_8
+
+class TranslateTask extends DefaultTask {
+    static final APPLICATION_NAME = "com.carlospaulino.parrot";
+
+    @OutputDirectory
+    File outputDir
+
+    @Input
+    String sourceLanguage
+
+    @Input
+    String destinationLanguage
+
+    @Input
+    String flavorName
+
+    @Input
+    String buildTypeName
+
+    @Input
+    Map resources
+
+    @Input
+    Map existingTranslatedResources
+
+    @Input
+    String apiKey
+
+    @Input
+    long cacheBuster
+
+    @TaskAction
+    void beginTranslation() {
+
+        // Cache resources per lang/flavor/buildType
+        def cacheFolder = project.file("$project.buildDir/parrot/${destinationLanguage}-${flavorName}${buildTypeName}/")
+        def cacheFile = new File(project.file(cacheFolder), "cache.json")
+        def cachedStringResources = extractCachedResources(cacheFile)
+
+        def changedResources = [:]
+        def unchangedResources = [:]
+
+        resources.each { resource ->
+            def cachedValue = cachedStringResources.get(resource.key)
+            def existingTranslatedValue = existingTranslatedResources.get(resource.key)
+
+            if (existingTranslatedValue != null) {
+                // continue
+            } else if (cachedValue == null ||
+                    !cachedValue.hasProperty("originalText") ||
+                    isNullOrEmpty(cachedValue.originalText as String) ||
+                    !cachedValue.equals(resource.value)) {
+
+                changedResources.put(resource.key, [originalText: resource.value])
+
+            } else {
+                unchangedResources.put(resource.key, resource.value)
+            }
+        }
+
+        def mergedResources = translate(changedResources) + unchangedResources
+
+        writeTranslatedResourceXml(generateTranslatedResourceXml(mergedResources), outputDir)
+
+        prepareDestination(cacheFolder)
+
+        cacheResources(cacheFile, mergedResources)
+    }
+
+    Map translate(Map changedResources) {
+        def translator = new Translate.Builder(newTrustedTransport(), getDefaultInstance(), null)
+                .setApplicationName(APPLICATION_NAME)
+                .setGoogleClientRequestInitializer(new TranslateRequestInitializer(apiKey))
+                .build();
+
+        def words = []
+
+        changedResources.each {
+            words.add(it.value.originalText)
+        }
+
+        def translationResult = translator
+                .translations()
+                .list(words, destinationLanguage)
+                .execute()
+
+        changedResources.eachWithIndex { entry, int i ->
+            entry.value.translatedText = (translationResult.translations as List)[i].translatedText
+        }
+
+        return changedResources
+    }
+
+
+    static writeTranslatedResourceXml(String xml, File outputDir) {
+        new File(outputDir, "translated-strings.xml").write(xml, UTF_8.name())
+    }
+
+    static cacheResources(File target, Map content) {
+        target.write(JsonOutput.toJson(content), UTF_8.name())
+    }
+
+    static prepareDestination(File target) {
+        if (target.exists()) {
+            target.deleteDir()
+        }
+        target.mkdirs()
+    }
+
+    static Map extractCachedResources(File cacheFile) {
+        return (cacheFile.exists() ? new JsonSlurper().parse(cacheFile) : [:]) as Map
+    }
+}
