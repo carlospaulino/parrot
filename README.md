@@ -50,7 +50,7 @@ ProTips
 If you think the translation that was auto generated is not accurate enough you can just override it, by setting the resources in the correct language folder. For example if you are translating to Spanish just create the file: `values-es/strings.xml` and add the resource. Parrot will skip that resource and not perform the translation.
 ```
 <resources>
-    <string name="app_name">Mi Applicación es la mejor</string>
+    <string name="app_name">Mi Aplicación es la mejor</string>
 </resources>
 ````
 
