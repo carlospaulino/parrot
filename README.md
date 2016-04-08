@@ -30,7 +30,7 @@ Parrot configuration must be done in the `parrot` closure:
 parrot {
 
     // Default Google Translate Api Key.
-    // You can also set an environmental variable GOOGLE_TRANSLATE_API_KEY with the key
+    // You can also set the environmental variable GOOGLE_TRANSLATE_API_KEY with the key
     apiKey = "MY_API_KEY"
 
     // Language Parrot is translation from
