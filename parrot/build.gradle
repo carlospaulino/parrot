@@ -6,22 +6,23 @@ apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 
 repositories {
-  mavenCentral()
+    mavenCentral()
 }
 
 publishing {
-  publications {
-    mavenJava(MavenPublication) {
-      from components.java
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
     }
-  }
 }
 
 dependencies {
-  compile 'com.google.api-client:google-api-client:1.21.0'
-  compile 'com.google.apis:google-api-services-translate:v2-rev44-1.21.0'
-  compile 'com.android.tools.build:gradle:2.0.0'
-  compile gradleApi()
-  compile localGroovy()
-  testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'com.google.api-client:google-api-client:1.21.0'
+    compile 'com.google.apis:google-api-services-translate:v2-rev44-1.21.0'
+    compile 'com.android.tools.build:gradle:2.0.0'
+    compile gradleApi()
+    compile localGroovy()
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile 'org.easytesting:fest-assert:1.4'
 }
