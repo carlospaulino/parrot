@@ -10,7 +10,7 @@ import static com.google.common.base.Strings.isNullOrEmpty
 import static java.lang.System.currentTimeMillis
 
 class ParrotPlugin implements Plugin<Project> {
-    static final API_KEY_ENV_VAR = "GOOGLE_TRANSLATE_API_KEY"
+    private static final API_KEY_ENV_VAR = "GOOGLE_TRANSLATE_API_KEY"
 
     @Override
     void apply(Project project) {
@@ -50,7 +50,7 @@ class ParrotPlugin implements Plugin<Project> {
         }
     }
 
-    static getApiKey(ParrotPluginExtension taskProperties) {
+    private static getApiKey(ParrotPluginExtension taskProperties) {
         def apiKeyEnvironmentalVariable = System.getenv(API_KEY_ENV_VAR)
         if (!isNullOrEmpty(apiKeyEnvironmentalVariable)) {
             return apiKeyEnvironmentalVariable;

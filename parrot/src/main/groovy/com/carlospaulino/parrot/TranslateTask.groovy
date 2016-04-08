@@ -9,14 +9,14 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
+import static com.carlospaulino.parrot.ResourcesSupport.analyzeResources
 import static com.carlospaulino.parrot.ResourcesSupport.generateTranslatedResourceXml
 import static com.google.api.client.googleapis.javanet.GoogleNetHttpTransport.newTrustedTransport
 import static com.google.api.client.json.jackson2.JacksonFactory.defaultInstance
-import static com.google.common.base.Strings.isNullOrEmpty
 import static groovy.json.internal.Charsets.UTF_8
 
 class TranslateTask extends DefaultTask {
-    static final APPLICATION_NAME = "com.carlospaulino.parrot";
+    private static final APPLICATION_NAME = "com.carlospaulino.parrot";
 
     @OutputDirectory
     File outputDir
@@ -53,26 +53,11 @@ class TranslateTask extends DefaultTask {
         def cacheFile = new File(project.file(cacheFolder), "cache.json")
         def cachedStringResources = extractCachedResources(cacheFile)
 
-        def changedResources = [:]
-        def unchangedResources = [:]
+        def analyzedResources = analyzeResources(resources, cachedStringResources, existingTranslatedResources)
 
-        resources.each { resource ->
-            def cachedValue = cachedStringResources.get(resource.key)
-            def existingTranslatedValue = existingTranslatedResources.get(resource.key)
+        def changedResources = analyzedResources.changedResources
 
-            if (existingTranslatedValue != null) {
-                // continue
-            } else if (cachedValue == null ||
-                    !cachedValue.hasProperty("originalText") ||
-                    isNullOrEmpty(cachedValue.originalText as String) ||
-                    !cachedValue.equals(resource.value)) {
-
-                changedResources.put(resource.key, [originalText: resource.value])
-
-            } else {
-                unchangedResources.put(resource.key, resource.value)
-            }
-        }
+        def unchangedResources = analyzedResources.unchangedResources
 
         def mergedResources = translate(changedResources) + unchangedResources
 
@@ -83,7 +68,7 @@ class TranslateTask extends DefaultTask {
         cacheResources(cacheFile, mergedResources)
     }
 
-    Map translate(Map changedResources) {
+    private Map translate(Map changedResources) {
         def translator = new Translate.Builder(newTrustedTransport(), getDefaultInstance(), null)
                 .setApplicationName(APPLICATION_NAME)
                 .setGoogleClientRequestInitializer(new TranslateRequestInitializer(apiKey))
@@ -98,9 +83,11 @@ class TranslateTask extends DefaultTask {
         def translationResult = translator
                 .translations()
                 .list(words, destinationLanguage)
+                .setSource(sourceLanguage)
                 .execute()
 
         changedResources.eachWithIndex { entry, int i ->
+            // The api returns the translations in the same order they are provided
             entry.value.translatedText = (translationResult.translations as List)[i].translatedText
         }
 
@@ -108,22 +95,22 @@ class TranslateTask extends DefaultTask {
     }
 
 
-    static writeTranslatedResourceXml(String xml, File outputDir) {
+    private static writeTranslatedResourceXml(String xml, File outputDir) {
         new File(outputDir, "translated-strings.xml").write(xml, UTF_8.name())
     }
 
-    static cacheResources(File target, Map content) {
+    private static cacheResources(File target, Map content) {
         target.write(JsonOutput.toJson(content), UTF_8.name())
     }
 
-    static prepareDestination(File target) {
+    private static prepareDestination(File target) {
         if (target.exists()) {
             target.deleteDir()
         }
         target.mkdirs()
     }
 
-    static Map extractCachedResources(File cacheFile) {
+    private static Map extractCachedResources(File cacheFile) {
         return (cacheFile.exists() ? new JsonSlurper().parse(cacheFile) : [:]) as Map
     }
 }

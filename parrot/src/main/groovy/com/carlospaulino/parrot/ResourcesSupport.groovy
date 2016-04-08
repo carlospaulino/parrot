@@ -1,13 +1,13 @@
 package com.carlospaulino.parrot
 
-import com.android.build.gradle.api.ApplicationVariant
 import groovy.xml.MarkupBuilder
 
 import static com.carlospaulino.parrot.ResourcesSupport.ResourceType.STRING
+import static com.google.common.base.Strings.isNullOrEmpty
 import static groovy.io.FileType.FILES
 
 class ResourcesSupport {
-    static final ENCLOSING_TAG = "resources"
+    private static final ENCLOSING_TAG = "resources"
 
     static Map extractResources(List<File> files, ResourceType resourceType = STRING) {
 
@@ -26,7 +26,7 @@ class ResourcesSupport {
         return map
     }
 
-    static List<File> getResourcesFiles(ApplicationVariant variant, language = "") {
+    static List<File> getResourcesFiles(variant, language = "") {
         def files = []
         variant.sourceSets.each { sourceSet ->
             sourceSet.resDirectories.each { resDir ->
@@ -60,10 +60,33 @@ class ResourcesSupport {
         return writer.toString()
     }
 
+    static analyzeResources(resources, cachedStringResources, existingTranslatedResources) {
+        def changedResources = [:]
+        def unchangedResources = [:]
+
+        resources.each { resource ->
+            def cachedValue = cachedStringResources.get(resource.key)
+            def existingTranslatedValue = existingTranslatedResources.get(resource.key)
+
+            if (existingTranslatedValue != null) {
+                // continue
+            } else if (cachedValue == null ||
+                    !cachedValue.hasProperty("originalText") ||
+                    isNullOrEmpty(cachedValue.originalText as String) ||
+                    !cachedValue.equals(resource.value)) {
+
+                changedResources.put(resource.key, [originalText: resource.value])
+
+            } else {
+                unchangedResources.put(resource.key, resource.value)
+            }
+        }
+        return [changedResources: changedResources, unchangedResources: unchangedResources]
+    }
+
     static enum ResourceType {
         STRING,
         COLOR,
         DIMEN,
     }
-
 }
