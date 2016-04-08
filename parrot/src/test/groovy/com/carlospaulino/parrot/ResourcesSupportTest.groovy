@@ -8,38 +8,25 @@ import static org.fest.assertions.MapAssert.entry
 
 class ResourcesSupportTest {
     private static final RESOURCES_PATH = './src/test/resources/'
+    private static final VARIANT = [sourceSets: [[resDirectories: [new File(RESOURCES_PATH)]]]]
 
     @Test
     void testExtractingResourcesFromXml() {
-        def variant = [sourceSets: [[resDirectories: [new File(RESOURCES_PATH)]]]]
-
-        List<File> files = getResourcesFiles(variant)
-
-        def resources = extractResources(files)
-
-        assertThat(resources)
+        assertThat(extractResources(getResourcesFiles(VARIANT)))
                 .hasSize(4)
                 .includes(entry('secondary', 'Secondary'), entry('app_name', 'My Application'), entry('plugin_name', 'Parrot'), entry('what_is', 'What is my name'))
     }
 
     @Test
     void testFindingResourceFilesForSpecificLanguage() {
-        def variant = [sourceSets: [[resDirectories: [new File(RESOURCES_PATH)]]]]
-
-        def files = getResourcesFiles(variant, "-es")
-
-        assertThat(files)
+        assertThat(getResourcesFiles(VARIANT, "-es"))
                 .hasSize(1)
                 .contains(new File(RESOURCES_PATH, "res/values-es/spanish-override.xml"))
     }
 
     @Test
     void testFindingResourceFilesForNoSpecificLanguage() {
-        def variant = [sourceSets: [[resDirectories: [new File(RESOURCES_PATH)]]]]
-
-        List<File> files = getResourcesFiles(variant)
-
-        assertThat(files)
+        assertThat(getResourcesFiles(VARIANT))
                 .hasSize(2)
                 .contains(new File(RESOURCES_PATH, "res/values/strings.xml"), new File(RESOURCES_PATH, "res/values/strings-secondary.xml")
         )
@@ -47,10 +34,9 @@ class ResourcesSupportTest {
 
     @Test
     void testAnalyzeResourcesIgnoresAlreadyLocalizedResources() {
-        def variant = [sourceSets: [[resDirectories: [new File(RESOURCES_PATH)]]]]
 
-        def existingTranslatedResources = extractResources(getResourcesFiles(variant, "-es"))
-        def resources = extractResources(getResourcesFiles(variant))
+        def existingTranslatedResources = extractResources(getResourcesFiles(VARIANT, "-es"))
+        def resources = extractResources(getResourcesFiles(VARIANT))
         def analyzedResources = analyzeResources(resources, [:], existingTranslatedResources)
 
         def changedResources = analyzedResources.changedResources

@@ -20,7 +20,7 @@ buildscript {
     }
 }
 
-apply plugin: 'com.android.application'
+// Apply below the Android Application Plugin (com.android.application)
 apply plugin: 'com.carlospaulino.parrot'
 ```
 
@@ -55,11 +55,11 @@ If you think the translation that was auto generated is not accurate enough you 
 ````
 
 You can also view the translated resources before they are merged by looking in your build folder.
-`{appModule}/build/generated/rs/{flavor}/{buildType}/values-{lang}/translated-strings.xml`
+`{appModule}/build/generated/res/rs/{flavor}/{buildType}/values-{lang}/translated-strings.xml`
 
 Finally
 -------
-Keep in mind that you have to comply with Google Attribution Requirements. More here: https://cloud.google.com/translate/v2/attribution
+Keep in mind that you have to comply with Google's Attribution Requirements. More here: https://cloud.google.com/translate/v2/attribution
 
 
 License

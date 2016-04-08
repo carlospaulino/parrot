@@ -17,6 +17,7 @@ class ParrotPlugin implements Plugin<Project> {
         project.extensions.create("parrot", ParrotPluginExtension)
 
         if (!project.hasProperty("android")) {
+            project.logger.error("Project ${project.name} requires the Android Plugin for Parrot to work")
             return
         }
 
@@ -28,8 +29,8 @@ class ParrotPlugin implements Plugin<Project> {
                 def variantName = variant.name.capitalize()
                 def taskProperties = project.property("parrot") as ParrotPluginExtension
 
-                if(taskProperties.destinationLanguages.size() == 0) {
-                    project.logger.warn("Parrot wont perform any translations unless you specify one or more destination languages")
+                if (taskProperties.destinationLanguages.size() == 0) {
+                    project.logger.warn("Parrot will not perform any translations unless you specify one or more destination languages")
                     return;
                 }
 

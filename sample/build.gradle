@@ -1,54 +1,55 @@
 buildscript {
-  repositories {
-    mavenLocal()
-    jcenter()
-  }
-  dependencies {
-    classpath 'com.carlospaulino:parrot:0.1.0'
-  }
+    repositories {
+        // Only for development
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.carlospaulino:parrot:0.1.0'
+    }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.carlospaulino.parrot'
 
 android {
-  compileSdkVersion 23
-  buildToolsVersion "23.0.2"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
 
-  defaultConfig {
-    applicationId "com.carlospaulino.parrotsample"
-    minSdkVersion 15
-    targetSdkVersion 23
-    versionCode 1
-    versionName "1.0"
-  }
-  buildTypes {
-    release {
-      minifyEnabled false
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    defaultConfig {
+        applicationId "com.carlospaulino.parrotsample"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
     }
-  }
-
-  lintOptions {
-    abortOnError false
-  }
-
-  productFlavors {
-    flavor1 {
-      applicationId "com.carlospaulino.parrotsample.flavor1"
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
 
-    flavor2 {
-      applicationId "com.carlospaulino.parrotsample.flavor2"
+    lintOptions {
+        abortOnError false
     }
-  }
+
+    productFlavors {
+        flavor1 {
+            applicationId "com.carlospaulino.parrotsample.flavor1"
+        }
+
+        flavor2 {
+            applicationId "com.carlospaulino.parrotsample.flavor2"
+        }
+    }
 }
 
 parrot {
-  destinationLanguages = ['es', 'fr', 'de']
-  alwaysTranslate = true
+    destinationLanguages = ['es', 'fr', 'de']
+    alwaysTranslate = true
 }
 
 dependencies {
-  compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.1.1'
 }
