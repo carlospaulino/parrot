@@ -1,0 +1,54 @@
+buildscript {
+    repositories {
+        // Only for development
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.carlospaulino:parrot:0.1.0'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.carlospaulino.parrot'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "com.carlospaulino.parrotsample"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    productFlavors {
+        flavor1 {
+            applicationId "com.carlospaulino.parrotsample.flavor1"
+        }
+
+        flavor2 {
+            applicationId "com.carlospaulino.parrotsample.flavor2"
+        }
+    }
+}
+
+parrot {
+    destinationLanguages = ['es', 'fr', 'de']
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:23.1.1'
+}
