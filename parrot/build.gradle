@@ -1,12 +1,13 @@
-group 'com.carlospaulino'
-version '0.1.0'
+plugins {
+    id 'nu.studer.plugindev' version '1.0.3'
+    id 'com.jfrog.bintray' version '1.6'
+}
 
-apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 publishing {
@@ -25,4 +26,28 @@ dependencies {
     compile localGroovy()
     testCompile group: 'junit', name: 'junit', version: '4.11'
     testCompile 'org.easytesting:fest-assert:1.4'
+}
+
+group = 'com.carlospaulino'
+version = '0.1.0'
+
+plugindev {
+    pluginImplementationClass 'com.carlospaulino.parrot.ParrotPlugin'
+    pluginDescription 'Gradle plugin that automatically translate all your string resources to multiple languages'
+    pluginLicenses 'Apache-2.0'
+    pluginTags 'gradle', 'plugin', 'android', 'gradle-plugin'
+    authorId 'carlospaulino'
+    authorName 'Carlos Paulino'
+    authorEmail 'cpaulino@gmail.com'
+    projectUrl 'https://github.com/carlospaulino/parrot'
+    projectInceptionYear '2016'
+    done()
+}
+
+if (System.getenv('BINTRAY_API_KEY') != null) {
+    bintray {
+        user = "carlospaulino"
+        key = System.getenv('BINTRAY_API_KEY')
+        pkg.repo = 'maven'
+    }
 }
