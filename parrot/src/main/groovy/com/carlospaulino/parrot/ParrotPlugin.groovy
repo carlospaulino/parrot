@@ -38,7 +38,7 @@ class ParrotPlugin implements Plugin<Project> {
 
                     def outputDirectory = project.file("$project.buildDir/generated/res/rs/${flavorName}/${buildType.name}/values-${language}/");
 
-                    def task = project.task("translateTextFor${variantName}To${language.toUpperCase()}", type: TranslateTask) {
+                    def task = project.task("translateStringResourcesFor${variantName}To${language.toUpperCase()}", type: TranslateTask) {
                         outputDir = outputDirectory
                         flavorName = variant.flavorName
                         buildTypeName = variant.buildType.name
