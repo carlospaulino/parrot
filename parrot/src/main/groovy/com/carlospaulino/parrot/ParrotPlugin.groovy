@@ -46,8 +46,8 @@ class ParrotPlugin implements Plugin<Project> {
                         sourceLanguage = taskProperties.sourceLanguage
                         resources = extractResources(getResourcesFiles(variant))
                         existingTranslatedResources = extractResources(getResourcesFiles(variant, "-${language}"))
-                        apiKey = getApiKey(taskProperties)
                         cacheBuster = taskProperties.alwaysTranslate ? currentTimeMillis() : 0
+                        apiKey = getApiKey(taskProperties)
                     } as TranslateTask
 
                     variant.registerResGeneratingTask(task, task.outputDir)
@@ -56,14 +56,13 @@ class ParrotPlugin implements Plugin<Project> {
         }
     }
 
+
     private static getApiKey(ParrotPluginExtension taskProperties) {
         def apiKeyEnvironmentalVariable = System.getenv(API_KEY_ENV_VAR)
         if (!isNullOrEmpty(apiKeyEnvironmentalVariable)) {
             return apiKeyEnvironmentalVariable;
-        } else if (!isNullOrEmpty(taskProperties.apiKey)) {
-            return taskProperties.apiKey;
-        } else {
-            throw new IllegalStateException("Missing Google Translate Api Key")
         }
+
+        return taskProperties.apiKey;
     }
 }

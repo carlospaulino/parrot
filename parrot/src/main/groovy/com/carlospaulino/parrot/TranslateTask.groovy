@@ -13,6 +13,7 @@ import static com.carlospaulino.parrot.ResourcesSupport.analyzeResources
 import static com.carlospaulino.parrot.ResourcesSupport.generateTranslatedResourceXml
 import static com.google.api.client.googleapis.javanet.GoogleNetHttpTransport.newTrustedTransport
 import static com.google.api.client.json.jackson2.JacksonFactory.defaultInstance
+import static com.google.common.base.Strings.isNullOrEmpty
 import static groovy.json.internal.Charsets.UTF_8
 
 class TranslateTask extends DefaultTask {
@@ -40,13 +41,17 @@ class TranslateTask extends DefaultTask {
     Map existingTranslatedResources
 
     @Input
-    String apiKey
+    long cacheBuster
 
     @Input
-    long cacheBuster
+    String apiKey
 
     @TaskAction
     void beginTranslation() {
+
+        if (isNullOrEmpty(apiKey)) {
+            throw new IllegalStateException("Missing Google Translate Api Key")
+        }
 
         // Cache resources per lang/flavor/buildType
         def cacheFolder = project.file("$project.buildDir/parrot/${destinationLanguage}-${flavorName}${buildTypeName}/")
