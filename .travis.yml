@@ -1,0 +1,16 @@
+language: groovy
+
+jdk:
+  - oraclejdk7
+  - oraclejdk8
+
+script:
+  - ./gradlew :parrot:clean :parrot:assemble :parrot:test
+
+branches:
+  only:
+    - master
+
+notifications:
+  email: false
+
