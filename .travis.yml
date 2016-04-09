@@ -1,15 +1,27 @@
-language: groovy
+language: android
 
 jdk:
-  - oraclejdk7
   - oraclejdk8
+
+android:
+  components:
+    - tools
+    - platform-tools
+    - build-tools-23.0.2
+    - android-23
+    - extra-android-m2repository
 
 script:
   - ./gradlew :parrot:clean :parrot:assemble :parrot:test
+  - ./gradlew :sample:assemble
 
 branches:
   only:
     - master
+
+cache:
+  directories:
+    - $HOME/.gradle
 
 notifications:
   email: false
