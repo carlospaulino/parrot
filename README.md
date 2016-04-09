@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/carlospaulino/parrot.svg?branch=master)](https://travis-ci.org/carlospaulino/parrot)
+
 Parrot
 ======
 
