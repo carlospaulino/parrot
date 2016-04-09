@@ -47,7 +47,6 @@ android {
 
 parrot {
     destinationLanguages = ['es', 'fr', 'de']
-    alwaysTranslate = true
 }
 
 dependencies {
