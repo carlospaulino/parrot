@@ -8,6 +8,12 @@ It leverages the Google Translate API in order to translate your string resource
 Installation
 ------------
 
+Get a Google Cloud account and get your Translate Api Key.
+
+`
+https://cloud.google.com/translate/
+`
+
 Add the following to your `build.gradle`:
 
 ```gradle
