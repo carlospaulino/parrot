@@ -13,7 +13,7 @@ android:
 
 script:
   - ./gradlew :parrot:clean :parrot:assemble :parrot:test
-  - ./gradlew :sample:assemble
+  - ./gradlew :sample:clean :sample:assemble
 
 cache:
   directories:
