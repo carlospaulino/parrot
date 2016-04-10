@@ -37,7 +37,7 @@ android {
 }
 
 parrot {
-    destinationLanguages = ['es', 'fr', 'de']
+    destinationLanguages = ['es', 'fr', 'de', 'it']
 }
 
 dependencies {
