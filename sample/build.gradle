@@ -1,8 +1,9 @@
 buildscript {
     repositories {
+        jcenter()
+
         // Only for development
         mavenLocal()
-        jcenter()
     }
     dependencies {
         classpath 'com.carlospaulino:parrot:0.1.0'
@@ -32,16 +33,6 @@ android {
 
     lintOptions {
         abortOnError false
-    }
-
-    productFlavors {
-        flavor1 {
-            applicationId "com.carlospaulino.parrotsample.flavor1"
-        }
-
-        flavor2 {
-            applicationId "com.carlospaulino.parrotsample.flavor2"
-        }
     }
 }
 
