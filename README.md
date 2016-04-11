@@ -41,7 +41,7 @@ parrot {
     // You can also set the environmental variable GOOGLE_TRANSLATE_API_KEY with the key
     apiKey = "MY_API_KEY"
 
-    // Language Parrot is translation from in ISO 639-1
+    // Language Parrot is translating from in ISO 639-1
     sourceLanguage = "en"
 
     // Languages Parrot is translating to in ISO 639-1
